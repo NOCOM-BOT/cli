@@ -6,6 +6,8 @@ import { Command } from "commander";
 import chalk from "chalk";
 import os from "node:os";
 import wait from "wait-for-stuff";
+import readline from "node:readline";
+import url from "url";
 
 function resolveHome(filepath: string) {
     if (filepath[0] === '~') {
@@ -16,18 +18,25 @@ function resolveHome(filepath: string) {
 
 const program = new Command("nocom-cli");
 
-program.version(JSON.parse(fs.readFileSync("package.json", { encoding: "utf8" })).version);
-
 program
+    .helpOption("-h, --help", "Show this help message")
+    .version(JSON.parse(fs.readFileSync("package.json", { encoding: "utf8" })).version, "-v, --version", "Output the current CLI version")
     .option("-d, --daemon", "Run in a detached process (this will create a service) [not implemented]")
+    .option("-a, --attach", "Attach to a running process (this will connect to a service) [not implemented]")
+    .option("-K, --kill-daemon", "Kill the daemon process [not implemented]")
     .option("-u, --user-data-dir <path>", "Specify user data directory for NOCOM. Default: ~/.nocom/profile_alpha0", process.env.NOCOM_USER_DATA_DIR)
     .option("-l, --log-level <level>", "Specify console output log level (silent, critical, error, warn, info, debug). Default: info", process.env.NOCOM_LOG_LEVEL ?? "info")
     .option("-g, --file-log-level <level>", "Specify file output log level (silent, critical, error, warn, info, debug). Default: debug", process.env.NOCOM_LOG_LEVEL ?? "verbose")
-    .option("-k, --core-dir <path>", "Specify NOCOM_BOT core (kernel) runtime directory (or hobt blob [currently not supported]). Default: none", process.env.NOCOM_CORE_DIR);
+    .option("-k, --core-dir <path>", "Specify NOCOM_BOT core (kernel) runtime directory (or hobt blob [currently not supported]). Default: none", process.env.NOCOM_CORE_DIR)
 
 program.parse(process.argv);
 
 const opts = program.opts();
+
+if (opts.version) {
+    console.log(JSON.parse(fs.readFileSync("package.json", { encoding: "utf8" })).version);
+    process.exit(0);
+}
 
 const logLevelMapping: { [x: string]: number } = {
     silent: -1,
@@ -61,18 +70,28 @@ function log(level: string, from: string, data: any[]) {
     }
 }
 
+let rl: readline.Interface | null = null;
+if (!opts.daemon) {
+    rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        prompt: ""
+    });
+}
+
 let abort: Function;
 
 let coreDir: string | boolean = opts.coreDir;
 if (typeof coreDir !== "string") {
     console.error("NOCOM_BOT Core/Kernel is missing. It is not embedded in the CLI (yet).");
     console.error("Please download NOCOM_BOT Core manually and put the directory to -k flag. (type `nocom-cli -h` for more information)");
+    process.exit(2);
 } else {
     (async () => {
         let NCBCore: any;
         try {
             let packageJSON = JSON.parse(await fs.promises.readFile(path.join(process.cwd(), coreDir, "package.json"), { encoding: "utf8" }));
-            let importC = await import(path.join(process.cwd(), coreDir, packageJSON.main));
+            let importC = await import(url.pathToFileURL(path.join(process.cwd(), coreDir, packageJSON.main)).toString());
             NCBCore = importC.default;
         } catch (e) {
             console.error("An exception has occured while trying to load NOCOM_BOT core.");
@@ -93,6 +112,39 @@ if (typeof coreDir !== "string") {
 
         log("info", "cli", ["Detected NOCOM_BOT kernel version", NCBCore.kernelVersion]);
 
+        // Hook to prompt channel
+        function prompt(nonceID: string) {
+            let pi = instance.promptChannel.promptList[nonceID];
+            rl?.question(`[P][${nonceID}] ${pi.promptInfo
+                }${pi.promptType === "yes-no" ? " [Y/N]" : ""
+                }${(typeof pi.defaultValue !== "undefined" && pi.defaultVaule !== null) ?
+                    ` [Default: ${pi.defaultValue}]` : ""
+                }: `, (input: string) => {
+                    if (pi.promptType === "yes-no") {
+                        if (input.toLowerCase() === "y") {
+                            pi.callback(true);
+                        } else if (input.toLowerCase() === "n") {
+                            pi.callback(false);
+                        } else {
+                            if (typeof pi.defaultValue !== "undefined" && pi.defaultValue !== null) {
+                                pi.callback(pi.defaultValue);
+                            } else {
+                                prompt(nonceID);
+                            }
+                        }
+                    } else {
+                        if (!input && typeof pi.defaultValue !== "undefined" && pi.defaultValue !== null) {
+                            pi.callback(pi.defaultValue);
+                        } else {
+                            pi.callback(input);
+                        }
+                    }
+                });
+        }
+        if (rl) {
+            instance.promptChannel.on("prompt", prompt);
+        }
+
         try {
             await instance.start();
             log("info", "cli", ["Started NOCOM_BOT kernel instance ID", instance.runInstanceID]);
@@ -101,7 +153,8 @@ if (typeof coreDir !== "string") {
             abort = () => {
                 wait.for.promise(instance.stop());
                 log("info", "cli", ["Stopped NOCOM_BOT kernel instance ID", instance.runInstanceID]);
-                abort = () => {};
+                abort = () => { };
+                instance.promptChannel.removeListener("prompt", prompt);
                 process.exit(0);
             };
         } catch (e) {
@@ -111,10 +164,14 @@ if (typeof coreDir !== "string") {
     })();
 }
 
-setTimeout(() => { }, 2**31-1);
 function stop() {
-    abort();
+    if (abort) {
+        abort();
+    }
+
+    rl?.close();
 }
+rl?.on("SIGINT", stop);
 process.on("SIGINT", stop);
 process.on("SIGTERM", stop);
 process.on("exit", stop);
