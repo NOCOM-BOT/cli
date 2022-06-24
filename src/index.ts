@@ -25,9 +25,9 @@ program
     .option("-a, --attach", "Attach to a running process (this will connect to a service) [not implemented]")
     .option("-K, --kill-daemon", "Kill the daemon process [not implemented]")
     .option("-u, --user-data-dir <path>", "Specify user data directory for NOCOM. Default: ~/.nocom/profile_alpha0", process.env.NOCOM_USER_DATA_DIR)
-    .option("-l, --log-level <level>", "Specify console output log level (silent, critical, error, warn, info, debug). Default: info", process.env.NOCOM_LOG_LEVEL ?? "info")
-    .option("-g, --file-log-level <level>", "Specify file output log level (silent, critical, error, warn, info, debug). Default: debug", process.env.NOCOM_LOG_LEVEL ?? "verbose")
-    .option("-k, --core-dir <path>", "Specify NOCOM_BOT core (kernel) runtime directory (or hobt blob [currently not supported]). Default: none", process.env.NOCOM_CORE_DIR)
+    .option("-l, --log-level <level>", "Specify console output log level (silent, critical, error, warn, info, debug, verbose)", process.env.NOCOM_LOG_LEVEL ?? "info")
+    .option("-g, --file-log-level <level>", "Specify file output log level (silent, critical, error, warn, info, debug, verbose)", process.env.NOCOM_LOG_LEVEL ?? "debug")
+    .option("-k, --core-dir <path>", "Specify NOCOM_BOT core (kernel) runtime directory (or hobt blob [currently not supported])", process.env.NOCOM_CORE_DIR)
 
 program.parse(process.argv);
 
@@ -44,14 +44,16 @@ const logLevelMapping: { [x: string]: number } = {
     error: 1,
     warn: 2,
     info: 3,
-    debug: 4
+    debug: 4,
+    verbose: 5
 };
 const logLevelHeader: { [x: string]: string } = {
     critical: chalk.bgRedBright.white.bold("CRIT"),
     error: chalk.redBright.bold("ERR "),
     warn: chalk.yellow.bold("WARN"),
     info: chalk.green.bold("INFO"),
-    debug: chalk.blue.bold("DEBG")
+    debug: chalk.blue.bold("DEBG"),
+    verbose: chalk.cyan.bold("VERB")
 }
 
 function checkOutputLevel(currentLogLevel: string, targetLogLevel: string) {
@@ -108,6 +110,7 @@ if (typeof coreDir !== "string") {
             warn: (from: string, ...data: any) => log("warn", from, data),
             error: (from: string, ...data: any) => log("error", from, data),
             critical: (from: string, ...data: any) => log("critical", from, data),
+            verbose: (from: string, ...data: any) => log("verbose", from, data)
         });
 
         log("info", "cli", ["Detected NOCOM_BOT kernel version", NCBCore.kernelVersion]);
