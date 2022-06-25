@@ -174,7 +174,16 @@ function stop() {
 
     rl?.close();
 }
-rl?.on("SIGINT", stop);
+let goingForceQuit = false;
+rl?.on("SIGINT", () => {
+    if (goingForceQuit) {
+        log("info", "cli", ["Force quitting CLI: 2 times SIGINT"]);
+        process.exit(0);
+    } else {
+        goingForceQuit = true;
+        stop();
+    }
+});
 process.on("SIGINT", stop);
 process.on("SIGTERM", stop);
 process.on("exit", stop);
