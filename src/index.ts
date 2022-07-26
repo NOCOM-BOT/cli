@@ -187,3 +187,10 @@ rl?.on("SIGINT", () => {
 process.on("SIGINT", stop);
 process.on("SIGTERM", stop);
 process.on("exit", stop);
+
+process.on("unhandledRejection", (reason: any, promise: Promise<any>) => {
+    log("critical", "cli", ["Unhandled rejection:", reason]);
+});
+process.on("uncaughtException", (error: Error) => {
+    log("critical", "cli", ["Uncaught exception:", error?.stack ?? String(error)]);
+});
