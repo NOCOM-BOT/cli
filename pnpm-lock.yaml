@@ -1,31 +1,31 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 specifiers:
-  '@tsconfig/node16': ^1.0.2
+  '@tsconfig/node18': ^1.0.1
   '@types/node': ^17.0.5
   chalk: ^5.0.0
   commander: ^8.3.0
-  typescript: ^4.5.4
+  typescript: ^4.7.4
   wait-for-stuff: ^1.4.0
 
 dependencies:
-  '@tsconfig/node16': 1.0.2
-  chalk: 5.0.0
+  chalk: 5.0.1
   commander: 8.3.0
-  typescript: 4.5.4
   wait-for-stuff: 1.4.0
 
 devDependencies:
-  '@types/node': 17.0.5
+  '@tsconfig/node18': 1.0.1
+  '@types/node': 17.0.45
+  typescript: 4.7.4
 
 packages:
 
-  /@tsconfig/node16/1.0.2:
-    resolution: {integrity: sha512-eZxlbI8GZscaGS7kkc/trHTT5xgrjH3/1n2JDwusC9iahPKWMRvRjJSAN5mCXviuTGQ/lHnhvv8Q1YTpnfz9gA==}
-    dev: false
+  /@tsconfig/node18/1.0.1:
+    resolution: {integrity: sha512-sNFeK6X2ATlhlvzyH4kKYQlfHXE2f2/wxtB9ClvYXevWpmwkUT7VaSrjIN9E76Qebz8qP5JOJJ9jD3QoD/Z9TA==}
+    dev: true
 
-  /@types/node/17.0.5:
-    resolution: {integrity: sha512-w3mrvNXLeDYV1GKTZorGJQivK6XLCoGwpnyJFbJVK/aTBQUxOCaa/GlFAAN3OTDFcb7h5tiFG+YXCO2By+riZw==}
+  /@types/node/17.0.45:
+    resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
     dev: true
 
   /bindings/1.5.0:
@@ -34,8 +34,8 @@ packages:
       file-uri-to-path: 1.0.0
     dev: false
 
-  /chalk/5.0.0:
-    resolution: {integrity: sha512-/duVOqst+luxCQRKEo4bNxinsOQtMP80ZYm7mMqzuh5PociNL0PvmHFvREJ9ueYL2TxlHjBcmLCdmocx9Vg+IQ==}
+  /chalk/5.0.1:
+    resolution: {integrity: sha512-Fo07WOYGqMfCWHOzSXOt2CxDbC6skS/jO9ynEcmpANMoPrD+W1r1K6Vx7iNm+AQmETU1Xr2t+n8nzkV9t6xh3w==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
     dev: false
 
@@ -44,8 +44,8 @@ packages:
     engines: {node: '>= 12'}
     dev: false
 
-  /deasync/0.1.24:
-    resolution: {integrity: sha512-i98vg42xNfRZCymummMAN0rIcQ1gZFinSe3btvPIvy6JFTaeHcumeKybRo2HTv86nasfmT0nEgAn2ggLZhOCVA==}
+  /deasync/0.1.26:
+    resolution: {integrity: sha512-YKw0BmJSWxkjtQsbgn6Q9CHSWB7DKMen8vKrgyC006zy0UZ6nWyGidB0IzZgqkVRkOglAeUaFtiRTeLyel72bg==}
     engines: {node: '>=0.11.0'}
     requiresBuild: true
     dependencies:
@@ -61,14 +61,14 @@ packages:
     resolution: {integrity: sha512-ibPK3iA+vaY1eEjESkQkM0BbCqFOaZMiXRTtdB0u7b4djtY6JnsjvPdUHVMg6xQt3B8fpTTWHI9A+ADjM9frzg==}
     dev: false
 
-  /typescript/4.5.4:
-    resolution: {integrity: sha512-VgYs2A2QIRuGphtzFV7aQJduJ2gyfTljngLzjpfW9FoYZF6xuw1W0vW9ghCKLfcWrCFxK81CSGRAvS1pn4fIUg==}
+  /typescript/4.7.4:
+    resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
     engines: {node: '>=4.2.0'}
     hasBin: true
-    dev: false
+    dev: true
 
   /wait-for-stuff/1.4.0:
     resolution: {integrity: sha512-PMD4il0BK3MWBp1eQTXvIAL4hyyTgKH+vnpTigElv8K2VID8rajbKjeq9Q9UnpDfccMDckYtzUvhsZ4JVIF8rA==}
     dependencies:
-      deasync: 0.1.24
+      deasync: 0.1.26
     dev: false
