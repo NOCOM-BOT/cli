@@ -94,7 +94,7 @@ if (typeof coreDir !== "string") {
     (async () => {
         let NCBCore: any;
         try {
-            let packageJSON = JSON.parse(await fs.promises.readFile(path.join(process.cwd(), coreDir, "package.json"), { encoding: "utf8" }));
+            let packageJSON = JSON.parse(await fs.promises.readFile(path.resolve(process.cwd(), coreDir, "package.json"), { encoding: "utf8" }));
             let importC = await import(url.pathToFileURL(path.join(process.cwd(), coreDir, packageJSON.main)).toString());
             NCBCore = importC.default;
         } catch (e) {
