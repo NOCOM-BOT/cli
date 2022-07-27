@@ -9,6 +9,8 @@ import wait from "wait-for-stuff";
 import readline from "node:readline";
 import url from "url";
 
+import packageJSON from "../package.json" assert { type: "json" };
+
 function resolveHome(filepath: string) {
     if (filepath[0] === '~') {
         return path.join(os.homedir(), filepath.slice(1));
@@ -20,7 +22,7 @@ const program = new Command("nocom-cli");
 
 program
     .helpOption("-h, --help", "Show this help message")
-    .version(JSON.parse(fs.readFileSync("package.json", { encoding: "utf8" })).version, "-v, --version", "Output the current CLI version")
+    .version(packageJSON.version, "-v, --version", "Output the current CLI version")
     .option("-d, --daemon", "Run in a detached process (this will create a service) [not implemented]")
     .option("-a, --attach", "Attach to a running process (this will connect to a service) [not implemented]")
     .option("-K, --kill-daemon", "Kill the daemon process [not implemented]")

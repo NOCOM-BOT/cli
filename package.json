@@ -1,10 +1,10 @@
 {
   "name": "@nocom_bot/cli",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "CLI for NOCOM_BOT core",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "bin": {
-    "nocom-cli": "dist/index.js"
+    "nocom-cli": "dist/src/index.js"
   },
   "scripts": {
     "build": "tsc",
