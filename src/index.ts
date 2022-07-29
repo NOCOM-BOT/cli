@@ -95,7 +95,7 @@ if (typeof coreDir !== "string") {
         let NCBCore: any;
         try {
             let packageJSON = JSON.parse(await fs.promises.readFile(path.resolve(process.cwd(), coreDir, "package.json"), { encoding: "utf8" }));
-            let importC = await import(url.pathToFileURL(path.join(process.cwd(), coreDir, packageJSON.main)).toString());
+            let importC = await import(url.pathToFileURL(path.resolve(process.cwd(), coreDir, packageJSON.main)).toString());
             NCBCore = importC.default;
         } catch (e) {
             console.error("An exception has occured while trying to load NOCOM_BOT core.");
