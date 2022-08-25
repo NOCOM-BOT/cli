@@ -156,9 +156,9 @@ if (typeof coreDir !== "string") {
 
             //@ts-ignore
             abort = () => {
+                abort = () => { };
                 wait.for.promise(instance.stop());
                 log("info", "cli", ["Stopped NOCOM_BOT kernel instance ID", instance.runInstanceID]);
-                abort = () => { };
                 instance.promptChannel.removeListener("prompt", prompt);
                 process.exit(0);
             };
