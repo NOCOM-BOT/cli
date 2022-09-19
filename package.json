@@ -1,8 +1,8 @@
 {
   "name": "@nocom_bot/cli",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "CLI for NOCOM_BOT core",
-  "main": "dist/src/index.js",
+  "main": "dist/src/import.js",
   "bin": {
     "nocom-cli": "dist/src/index.js"
   },
