@@ -103,7 +103,7 @@ if (!opts.daemon) {
     });
 }
 
-let abort: Function;
+let abort: () => void;
 
 let coreDir: string | boolean = opts.coreDir;
 if (typeof coreDir !== "string") {
@@ -170,15 +170,24 @@ if (typeof coreDir !== "string") {
             instance.promptChannel.on("prompt", prompt);
         }
 
+        instance.signalChannel.on("start", () => {
+            log("info", "cli", ["Started NOCOM_BOT kernel instance ID", instance.runInstanceID]);
+        });
+
+        instance.signalChannel.on("stop", (isRestart: boolean) => {
+            log("info", "cli", ["Stopped NOCOM_BOT kernel instance ID", instance.runInstanceID]);
+            if (!isRestart) {
+                abort();
+            }
+        });
+
         try {
             await instance.start();
-            log("info", "cli", ["Started NOCOM_BOT kernel instance ID", instance.runInstanceID]);
-
+            
             //@ts-ignore
             abort = () => {
                 abort = () => { };
                 wait.for.promise(instance.stop());
-                log("info", "cli", ["Stopped NOCOM_BOT kernel instance ID", instance.runInstanceID]);
                 instance.promptChannel.removeListener("prompt", prompt);
                 process.exit(0);
             };
