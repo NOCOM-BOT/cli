@@ -5,7 +5,6 @@ import path from "node:path";
 import { Command } from "commander";
 import chalk from "chalk";
 import os from "node:os";
-import wait from "wait-for-stuff";
 import readline from "node:readline";
 import url from "url";
 
@@ -185,9 +184,9 @@ if (typeof coreDir !== "string") {
             await instance.start();
             
             //@ts-ignore
-            abort = () => {
+            abort = async () => {
                 abort = () => { };
-                wait.for.promise(instance.stop());
+                await instance.stop();
                 instance.promptChannel.removeListener("prompt", prompt);
                 process.exit(0);
             };
@@ -217,7 +216,6 @@ rl?.on("SIGINT", () => {
 });
 process.on("SIGINT", stop);
 process.on("SIGTERM", stop);
-process.on("exit", stop);
 
 process.on("unhandledRejection", (reason: any, promise: Promise<any>) => {
     log("critical", "cli", ["Unhandled rejection:", reason]);
