@@ -47,9 +47,13 @@ export function updateLogSplit(logRoot: string) {
     }
 
     for (;;) {
+        let file = resolve(logRoot, getCurrentLogFile());
         // Test if log split file exists, if not, return
         // If it does, increment log split and try again
-        if (fs.existsSync(resolve(logRoot, getCurrentLogFile()))) {
+        if (
+            fs.existsSync(file) ||
+            fs.existsSync(file + ".br")
+        ) {
             lastLogged.logSplit++;
         } else {
             return;
@@ -63,7 +67,7 @@ export function log(logRoot: string, ...args: any[]) {
 
     // Convert args to writable string without colors
     let formattedData = args.map(arg => {
-        if (typeof args === "object") {
+        if (typeof arg === "object") {
             return formatWithOptions({ colors: false }, "%O", arg);
         } else {
             return formatWithOptions({ colors: false }, "%s", arg);
