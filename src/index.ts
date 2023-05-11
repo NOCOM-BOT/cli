@@ -106,7 +106,7 @@ let abort: () => void;
 
 let coreDir: string | boolean = opts.coreDir;
 if (typeof coreDir !== "string") {
-    console.error("NOCOM_BOT Core/Kernel is missing. It is not embedded in the CLI (yet).");
+    console.error("NOCOM_BOT Core/Kernel is missing.");
     console.error("Please download NOCOM_BOT Core manually and put the directory to -k flag. (type `nocom-cli -h` for more information)");
     process.exit(2);
 } else {
@@ -176,7 +176,7 @@ if (typeof coreDir !== "string") {
         instance.signalChannel.on("stop", (isRestart: boolean) => {
             log("info", "cli", ["Stopped NOCOM_BOT kernel instance ID", instance.runInstanceID]);
             if (!isRestart) {
-                abort();
+                setTimeout(() => process.exit(0), 100);
             }
         });
 
