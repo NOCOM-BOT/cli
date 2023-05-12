@@ -214,7 +214,16 @@ rl?.on("SIGINT", () => {
         stop();
     }
 });
-process.on("SIGINT", stop);
+process.on("SIGINT", () => {
+    if (goingForceQuit) {
+        log("info", "cli", ["Force quitting CLI: 2 times SIGINT"]);
+        process.exit(0);
+    } else {
+        goingForceQuit = true;
+        log("info", "cli", ["Stopping NOCOM_BOT kernel..."]);
+        stop();
+    }
+});
 process.on("SIGTERM", stop);
 
 process.on("unhandledRejection", (reason: any, promise: Promise<any>) => {
